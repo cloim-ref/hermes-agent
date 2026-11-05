@@ -538,9 +538,10 @@ def _uvicorn_console_logging() -> None:
     from uvicorn.logging import AccessFormatter, DefaultFormatter
 
     formats = LOGGING_CONFIG["formatters"]
+    use_colors = bool(sys.stdout and getattr(sys.stdout, "isatty", lambda: False)())
     for name, stream, formatter in (
-        ("uvicorn", sys.stderr, DefaultFormatter(formats["default"]["fmt"])),
-        ("uvicorn.access", sys.stdout, AccessFormatter(formats["access"]["fmt"])),
+        ("uvicorn", sys.stderr, DefaultFormatter(formats["default"]["fmt"], use_colors=use_colors)),
+        ("uvicorn.access", sys.stdout, AccessFormatter(formats["access"]["fmt"], use_colors=use_colors)),
     ):
         logger = logging.getLogger(name)
         logger.propagate = False
